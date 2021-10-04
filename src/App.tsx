@@ -1,26 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { ReactNode } from 'react';
+import {
+  BrowserRouter,
+  Switch,
+  Route,
+  Redirect
+} from 'react-router-dom';
+
+import Home from './pages/Home';
+import User from './pages/User';
+import Account from './pages/Account';
+
+import { GlobalProvider } from './context/globalState';
+
+interface IPrivateRoute {
+  children: ReactNode,
+  path: string;
+}
+
+function PrivateRoute( {children, path}: IPrivateRoute ){
+  let auth = true;
+  
+  return(
+    <Route path={path}>
+      { auth ?
+        children :
+        <Redirect to='/'/>  
+      }
+    </Route>
+  )
+}
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  return(
+    <GlobalProvider>
+      <BrowserRouter>
+        <Switch>
+          <Route exact={true} path='/' component={Home} />
+
+          <Route exact={true} path='/conta' component={Account} />
+
+          <PrivateRoute path='/user/:id'>
+            <User />
+          </PrivateRoute>
+
+          {/* <PrivateRoute path='/conta'>
+            <Account />
+          </PrivateRoute> */}
+        </Switch>
+      </BrowserRouter>
+    </GlobalProvider>
+  )
 }
 
 export default App;
